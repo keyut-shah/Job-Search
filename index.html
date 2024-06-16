@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Job Listings</title>
+        <link rel="stylesheet" href="styles.css" />
+        <!-- Include PDF.js library -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
+        <script type="importmap">
+            {
+                "imports": {
+                    "@google/generative-ai": "https://esm.run/@google/generative-ai"
+                }
+            }
+        </script>
+        <style>
+            .pdf-preview-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.8);
+                z-index: 9999;
+                padding: 20px;
+            }
+            .pdf-preview-modal-content {
+                position: relative;
+                max-width: 80%;
+                max-height: 80%;
+                margin: 0 auto;
+            }
+            .pdf-preview-modal-content iframe {
+                width: 100%;
+                height: 100%;
+                border: none;
+            }
+            .pdf-preview-modal-close {
+                position: absolute;
+                top: 10px;
+                right: 20px;
+                cursor: pointer;
+                color: #fff;
+                font-size: 24px;
+            }
+            .pdf-page {
+                width: 100%;
+                border: 1px solid #ddd;
+                margin-bottom: 10px;
+            }
+
+            .custom-dropdown {
+                position: relative;
+                display: inline-block;
+                width: 100%;
+            }
+            .custom-dropdown-select {
+                appearance: none;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                background-color: #fff;
+                color: #333;
+                padding: 10px;
+                border: 1px solid #ccc;
+                cursor: pointer;
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+                font-size: 16px;
+                line-height: 1.5;
+                outline: none;
+            }
+            .custom-dropdown-options {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                z-index: 999;
+                background-color: #fff;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                max-height: 300px; /* Fixed height for dropdown */
+                overflow-y: auto; /* Enable scrolling */
+                border: 1px solid #ccc;
+                width: 100%;
+                display: none;
+            }
+            .custom-dropdown-options.active {
+                display: block;
+            }
+            .custom-dropdown-option {
+                padding: 10px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+            .custom-dropdown-option:hover {
+                background-color: #f0f0f0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="filters">
+                <h2>Filters</h2>
+                <form id="filterForm">
+                    <label for="roles">Roles</label>
+                    <div class="custom-dropdown">
+                        <select
+                            id="roles"
+                            name="roles"
+                            class="custom-dropdown-select"
+                            required
+                        >
+                            <option value="" selected>Select Role</option>
+                            <option value="AI Engineer">AI Engineer</option>
+                            <option value="AI Platform Engineer">
+                                AI Platform Engineer
+                            </option>
+                            <option value="AI Specialist">AI Specialist</option>
+                            <option value="AI Systems Engineer">
+                                AI Systems Engineer
+                            </option>
+                            <option value="AR/VR Developer">
+                                AR/VR Developer
+                            </option>
+                            <option value="AR/VR Software Engineer">
+                                AR/VR Software Engineer
+                            </option>
+                            <option value="Backend Engineer">
+                                Backend Engineer
+                            </option>
+                            <option value="Big Data Architect">
+                                Big Data Architect
+                            </option>
+                            <option value="Big Data Engineer">
+                                Big Data Engineer
+                            </option>
+                            <option value="Blockchain Developer">
+                                Blockchain Developer
+                            </option>
+                            <option value="Blockchain Engineer">
+                                Blockchain Engineer
+                            </option>
+                            <option value="Business Intelligence Developer">
+                                Business Intelligence Developer
+                            </option>
+                            <option value="Cloud Architect">
+                                Cloud Architect
+                            </option>
+                            <option value="Cloud Engineer">
+                                Cloud Engineer
+                            </option>
+                            <option value="Cloud Solutions Architect">
+                                Cloud Solutions Architect
+                            </option>
+                            <option value="Cloud Solutions Engineer">
+                                Cloud Solutions Engineer
+                            </option>
+                            <option value="Computer Systems Analyst">
+                                Computer Systems Analyst
+                            </option>
+                            <option value="Cybersecurity Analyst">
+                                Cybersecurity Analyst
+                            </option>
+                            <option value="Cybersecurity Specialist">
+                                Cybersecurity Specialist
+                            </option>
+                            <option value="Data Analyst">Data Analyst</option>
+                            <option value="Data Architect">
+                                Data Architect
+                            </option>
+                            <option value="Data Engineer">Data Engineer</option>
+                            <option value="Data Governance Specialist">
+                                Data Governance Specialist
+                            </option>
+                            <option value="Data Scientist">
+                                Data Scientist
+                            </option>
+                            <option value="Data Steward">Data Steward</option>
+                            <option value="Data Warehouse Engineer">
+                                Data Warehouse Engineer
+                            </option>
+                            <option value="Data Warehouse Specialist">
+                                Data Warehouse Specialist
+                            </option>
+                            <option value="Database Administrator">
+                                Database Administrator
+                            </option>
+                            <option value="Digital Analyst">
+                                Digital Analyst
+                            </option>
+                            <option value="Digital Communications Specialist">
+                                Digital Communications Specialist
+                            </option>
+                            <option value="Digital Innovation Manager">
+                                Digital Innovation Manager
+                            </option>
+                            <option value="Digital Marketing Specialist">
+                                Digital Marketing Specialist
+                            </option>
+                            <option value="Digital Transformation Manager">
+                                Digital Transformation Manager
+                            </option>
+                            <option value="Digital Transformation Specialist">
+                                Digital Transformation Specialist
+                            </option>
+                            <option value="Embedded Systems Engineer">
+                                Embedded Systems Engineer
+                            </option>
+                            <option value="Enterprise Architect">
+                                Enterprise Architect
+                            </option>
+                            <option value="Enterprise IT Architect">
+                                Enterprise IT Architect
+                            </option>
+                            <option value="Enterprise Technology Specialist">
+                                Enterprise Technology Specialist
+                            </option>
+                            <option value="ERP Analyst">ERP Analyst</option>
+                            <option value="ERP Consultant">
+                                ERP Consultant
+                            </option>
+                            <option value="Full Stack Engineer">
+                                Full Stack Engineer
+                            </option>
+                            <option value="Full Stack Engineer">
+                                Frontend Engineer
+                            </option>
+                            <option value="Game Developer">
+                                Game Developer
+                            </option>
+                            <option value="Hardware Engineer">
+                                Hardware Engineer
+                            </option>
+                            <option value="Healthcare IT Specialist">
+                                Healthcare IT Specialist
+                            </option>
+                            <option value="Information Security Analyst">
+                                Information Security Analyst
+                            </option>
+                            <option value="Information Systems Manager">
+                                Information Systems Manager
+                            </option>
+                            <option value="Information Technology Analyst">
+                                Information Technology Analyst
+                            </option>
+                            <option value="Information Technology Manager">
+                                Information Technology Manager
+                            </option>
+                            <option value="IT Consultant">IT Consultant</option>
+                            <option value="IT Coordinator">
+                                IT Coordinator
+                            </option>
+                            <option value="IT Director">IT Director</option>
+                            <option value="IT Help Desk Technician">
+                                IT Help Desk Technician
+                            </option>
+                            <option value="IT Manager">IT Manager</option>
+                            <option value="IT Operations Analyst">
+                                IT Operations Analyst
+                            </option>
+                            <option value="IT Operations Manager">
+                                IT Operations Manager
+                            </option>
+                            <option value="IT Procurement Specialist">
+                                IT Procurement Specialist
+                            </option>
+                            <option value="IT Project Coordinator">
+                                IT Project Coordinator
+                            </option>
+                            <option value="IT Project Manager">
+                                IT Project Manager
+                            </option>
+                            <option value="IT Risk Manager">
+                                IT Risk Manager
+                            </option>
+                            <option value="IT Security Specialist">
+                                IT Security Specialist
+                            </option>
+                            <option value="IT Service Desk Analyst">
+                                IT Service Desk Analyst
+                            </option>
+                            <option value="IT Specialist">IT Specialist</option>
+                            <option value="IT Support Engineer">
+                                IT Support Engineer
+                            </option>
+                            <option value="IT Support Specialist">
+                                IT Support Specialist
+                            </option>
+                            <option value="IT Systems Administrator">
+                                IT Systems Administrator
+                            </option>
+                            <option value="IT Systems Analyst">
+                                IT Systems Analyst
+                            </option>
+                            <option value="IT Systems Engineer">
+                                IT Systems Engineer
+                            </option>
+                            <option value="IT Trainer">IT Trainer</option>
+                            <option value="Knowledge Engineer">
+                                Knowledge Engineer
+                            </option>
+                            <option value="Machine Learning Engineer">
+                                Machine Learning Engineer
+                            </option>
+                            <option value="Machine Vision Engineer">
+                                Machine Vision Engineer
+                            </option>
+                            <option value="Mobile Application Developer">
+                                Mobile Application Developer
+                            </option>
+                            <option value="Mobile Developer">
+                                Mobile Developer
+                            </option>
+                            <option value="Network Administrator">
+                                Network Administrator
+                            </option>
+                            <option value="Network Analyst">
+                                Network Analyst
+                            </option>
+                            <option value="Network Architect">
+                                Network Architect
+                            </option>
+                            <option value="Network Operations Manager">
+                                Network Operations Manager
+                            </option>
+                            <option value="Network Security Engineer">
+                                Network Security Engineer
+                            </option>
+                            <option value="Project Manager">
+                                Project Manager
+                            </option>
+                            <option value="Quality Assurance Engineer">
+                                Quality Assurance Engineer
+                            </option>
+                            <option value="Scrum Master">Scrum Master</option>
+                            <option value="Security Engineer">
+                                Security Engineer
+                            </option>
+                            <option value="Software Architect">
+                                Software Architect
+                            </option>
+                            <option value="Software Configuration Manager">
+                                Software Configuration Manager
+                            </option>
+                            <option value="Software Developer">
+                                Software Developer
+                            </option>
+                            <option value="Software Engineer">
+                                Software Engineer
+                            </option>
+                            <option value="Software Implementation Specialist">
+                                Software Implementation Specialist
+                            </option>
+                            <option value="Software Test Engineer">
+                                Software Test Engineer
+                            </option>
+                            <option value="Solution Architect">
+                                Solution Architect
+                            </option>
+                            <option value="Systems Analyst">
+                                Systems Analyst
+                            </option>
+                            <option value="Systems Consultant">
+                                Systems Consultant
+                            </option>
+                            <option value="Systems Designer">
+                                Systems Designer
+                            </option>
+                            <option value="Systems Development Engineer">
+                                Systems Development Engineer
+                            </option>
+                            <option value="Systems Integration Engineer">
+                                Systems Integration Engineer
+                            </option>
+                            <option value="Systems Security Analyst">
+                                Systems Security Analyst
+                            </option>
+                            <option value="Systems Engineer">
+                                Systems Engineer
+                            </option>
+                            <option value="System Administrator">
+                                System Administrator
+                            </option>
+                            <option value="System Engineer">
+                                System Engineer
+                            </option>
+                            <option value="Technical Account Manager">
+                                Technical Account Manager
+                            </option>
+                            <option value="Technical Architect">
+                                Technical Architect
+                            </option>
+                            <option value="Technical Operations Engineer">
+                                Technical Operations Engineer
+                            </option>
+                            <option value="Technical Operations Manager">
+                                Technical Operations Manager
+                            </option>
+                            <option value="Technical Support Engineer">
+                                Technical Support Engineer
+                            </option>
+                            <option value="Technology Analyst">
+                                Technology Analyst
+                            </option>
+                            <option value="Technology Consultant">
+                                Technology Consultant
+                            </option>
+                            <option value="Technology Manager">
+                                Technology Manager
+                            </option>
+                            <option value="Technology Solutions Analyst">
+                                Technology Solutions Analyst
+                            </option>
+                            <option value="Technology Solutions Architect">
+                                Technology Solutions Architect
+                            </option>
+                            <option value="Technology Trainer">
+                                Technology Trainer
+                            </option>
+                            <option value="Telecommunications Engineer">
+                                Telecommunications Engineer
+                            </option>
+                            <option value="UI/UX Designer">
+                                UI/UX Designer
+                            </option>
+                            <option value="UX Researcher">UX Researcher</option>
+                            <option value="UX/UI Developer">
+                                UX/UI Developer
+                            </option>
+                            <option value="Virtual Assistant Developer">
+                                Virtual Assistant Developer
+                            </option>
+                            <option value="Web Content Manager">
+                                Web Content Manager
+                            </option>
+                            <option value="Web Developer">Web Developer</option>
+                        </select>
+                    </div>
+
+                    <label for="skills">Skills</label>
+                    <textarea
+                        type="text"
+                        id="skills"
+                        name="skills"
+                        style="width: 290px; height: 50px"
+                    ></textarea>
+
+                    <label for="experience">Experience</label>
+                    <input
+                        type="number"
+                        id="years"
+                        name="years"
+                        placeholder="0"
+                        required
+                    />
+
+                    <label for="location">Location</label>
+                    <input type="text" id="location" name="location" required />
+
+                    <label for="resume">Upload Resume</label>
+                    <input
+                        type="file"
+                        id="resume"
+                        name="resume"
+                        accept=".pdf"
+                        required
+                    />
+
+                    <button type="button" id="previewButton">
+                        Preview Resume
+                    </button>
+                    <button type="button" id="extractButton">Find Jobs</button>
+                </form>
+            </div>
+            <div class="job-listings" id="jobListings">
+                <h2>Job Listings</h2>
+                <div id="loader" class="loader" style="display: none"></div>
+                <!-- Job listings will be populated here -->
+            </div>
+        </div>
+
+        <!-- PDF Preview Modal -->
+        <div class="pdf-preview-modal" id="pdfPreviewModal">
+            <div class="pdf-preview-modal-content">
+                <span class="pdf-preview-modal-close" id="closePreview"
+                    >&times;</span
+                >
+                <iframe
+                    id="pdfPreview"
+                    width="100%"
+                    height="100%"
+                    frameborder="0"
+                ></iframe>
+            </div>
+        </div>
+
+        <script src="module.mjs" type="module"></script>
+        <script src="script.js" type="module"></script>
+    </body>
+</html>

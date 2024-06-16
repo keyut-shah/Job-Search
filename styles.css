@@ -1,0 +1,213 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
+body {
+    font-family: "Roboto", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f4f8;
+}
+
+.container {
+    display: flex;
+    padding: 20px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.filters {
+    width: 300px;
+    padding: 20px;
+    background-color: #fffbeb;
+    border: 2px solid #fcd34d;
+    margin-right: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    animation: slideInFromLeft 0.5s ease-in-out;
+}
+
+.filters h2 {
+    margin-top: 0;
+    font-weight: 500;
+    color: #d97706;
+}
+
+.filters label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #9a3412;
+}
+
+.filters select,
+.filters input[type="text"],
+.filters input[type="number"],
+.filters input[type="file"],
+.filters button {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.filters input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.filters button {
+    background-color: #fbbf24;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.filters button:hover {
+    background-color: #f59e0b;
+}
+
+.job-listings {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #fff;
+    border: 2px solid #60a5fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    animation: slideInFromRight 0.5s ease-in-out;
+}
+
+.job-listing {
+    display: flex;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    transition: transform 0.3s ease;
+    background-color: #e0f2fe;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+/* .link-class {
+    justify-content: right;
+} */
+
+.loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid gold; /* Change border-top color to golden yellow */
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    position: absolute;
+    top: 50%; /* Position at 50% from top */
+    left: 50%; /* Position at 50% from left */
+    transform: translate(-50%, -50%); /* Center align using transform */
+    display: none;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.job-listing:hover {
+    transform: translateX(10px);
+    background-color: #bae6fd;
+}
+
+.job-listing:last-child {
+    border-bottom: none;
+}
+
+.job-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1d4ed8;
+}
+
+.job-details {
+    margin-top: 10px;
+    color: #1e3a8a;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInFromLeft {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+/* Styles for PDF preview modal */
+.pdf-preview-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    overflow: hidden; /* Ensure content doesn't overflow */
+}
+
+.pdf-preview-modal-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pdf-preview-modal-content {
+    position: relative;
+    width: 80%;
+    height: 80%;
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px;
+    overflow: auto;
+}
+
+.pdf-page {
+    width: 100%;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.pdf-preview-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+    color: #000;
+    font-size: 24px;
+}
